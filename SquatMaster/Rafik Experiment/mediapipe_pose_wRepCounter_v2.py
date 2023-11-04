@@ -2,7 +2,7 @@ import cv2
 import mediapipe as mp
 import numpy as np
 import sys
-sys.path.insert(0,'../functions')
+sys.path.insert(0,'SquatMaster/functions')
 from rep_counter1 import rep_counter
 mp_drawing = mp.solutions.drawing_utils
 mp_pose = mp.solutions.pose
@@ -20,10 +20,12 @@ def calculate_angle(a,b,c):
         angle = 360-angle
     return angle 
 
+
 # Specify the location of the file with the video to be read
-filename_r = '/Videos/IMG_3620.MOV'
+sys.path.insert(0,'SquatMaster/SquatMaster/Data/videos')
+filename_r = 'The Back Squat-fullvideo.mp4'
 # Specify the location where the new video with detections will be written
-filename_w = '/home/rafik/PROJECTS/pose1/Material/IMG_3620_test.mp4'
+filename_w = 'The Back Squat-fullvideo-out.mp4'
 # Capture the video from the file
 cap = cv2.VideoCapture(filename_r)
 
