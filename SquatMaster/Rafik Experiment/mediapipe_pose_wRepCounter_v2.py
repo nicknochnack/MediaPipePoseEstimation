@@ -7,8 +7,6 @@ from rep_counter1 import rep_counter
 mp_drawing = mp.solutions.drawing_utils
 mp_pose = mp.solutions.pose
 import os
-os.getcwd()
-
 
 # Define a function that calculates an angle between three points in x,y space
 def calculate_angle(a,b,c):
@@ -25,11 +23,9 @@ def calculate_angle(a,b,c):
 
 
 # Specify the location of the file with the video to be read
-# sys.path.insert(0,'../Data/videos')
-os.path.abspath('..')
-filename_r = 'Data/videos/exercise_stock_video3.mp4'
+filename_r = '../Data/videos/exercise_stock_video3.mp4'
 # Specify the location where the new video with detections will be written
-filename_w = 'Data/videos/exercise_stock_video3_wRepCount.mp4'
+filename_w = '../Data/videos/exercise_stock_video3_wRepCount.mp4'
 # Capture the video from the file
 cap = cv2.VideoCapture(filename_r)
 
