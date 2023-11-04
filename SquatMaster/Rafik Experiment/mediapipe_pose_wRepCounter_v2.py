@@ -21,7 +21,7 @@ def calculate_angle(a,b,c):
     return angle 
 
 # Specify the location of the file with the video to be read
-filename_r = '/home/rafik/PROJECTS/pose1/Material/IMG_3620.MOV'
+filename_r = '/Videos/IMG_3620.MOV'
 # Specify the location where the new video with detections will be written
 filename_w = '/home/rafik/PROJECTS/pose1/Material/IMG_3620_test.mp4'
 # Capture the video from the file
