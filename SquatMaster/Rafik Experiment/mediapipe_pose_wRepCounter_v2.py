@@ -2,7 +2,7 @@ import cv2
 import mediapipe as mp
 import numpy as np
 import sys
-sys.path.insert(0,'../functions')
+sys.path.insert(0,'SquatMaster/functions')
 from rep_counter1 import rep_counter
 mp_drawing = mp.solutions.drawing_utils
 mp_pose = mp.solutions.pose
@@ -19,6 +19,7 @@ def calculate_angle(a,b,c):
     if angle >180.0:
         angle = 360-angle
     return angle 
+
 
 # Specify the location of the file with the video to be read
 sys.path.insert(0,'../Data/videos')
