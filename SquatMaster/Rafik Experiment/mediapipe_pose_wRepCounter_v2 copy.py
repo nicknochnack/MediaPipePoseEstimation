@@ -22,11 +22,11 @@ def calculate_angle(a,b,c):
 
 
 # Specify the location of the file with the video to be read
-sys.path.insert(0,'SquatMaster/SquatMaster/Data/videos')
-filename_r = 'video1.mov'
+# sys.path.insert(0,'SquatMaster/SquatMaster/Data/videos')
+filename_r = 'SquatMaster/Data/videos/exercise_stock_video3.mp4'
 # Specify the location where the new video with detections will be written
-filename_w = 'video1-out.mov'
-# Capture the video from the file
+filename_w = 'SquatMaster/Data/videos/exercise_stock_video3-out.mp4'
+# Capture the video from the filepath
 cap = cv2.VideoCapture(filename_r)
 
 # Get video frame dimensions and fps
