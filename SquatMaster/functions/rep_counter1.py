@@ -1,14 +1,6 @@
 
-def rep_counter(angle,upper_limit,lower_limit,min_rep_count,min_rep_time,time)
+def rep_counter(angle,upper_limit,lower_limit,min_rep_count,min_rep_time,time,stage,rep_count,last_event_time,real_counter):
 
-    # Rep Counter logic
-    # The rep is registered when the knee bend angle goes from the upper limit to the lower limit
-    upper_limit = 160
-    lower_limit = 80
-    # Specify the minimum rep number to start registering the set
-    min_rep_count = 2
-    # Specify the minimum time between reps
-    min_rep_time = 3 #[s]
     # Above the upper angle limit, register the "hold up" stage
     if angle >= upper_limit:
         stage = 'hold up'
@@ -32,4 +24,4 @@ def rep_counter(angle,upper_limit,lower_limit,min_rep_count,min_rep_time,time)
     if time - last_event_time > min_rep_time:
         rep_count = 0
 
-        return real_counter, last_event_time, stage
+    return stage,rep_count,last_event_time,real_counter
