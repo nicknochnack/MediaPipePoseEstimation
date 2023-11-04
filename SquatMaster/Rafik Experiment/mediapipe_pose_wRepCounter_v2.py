@@ -2,7 +2,7 @@ import cv2
 import mediapipe as mp
 import numpy as np
 import sys
-sys.path.insert(0,'SquatMaster/functions')
+sys.path.insert(0,'../functions')
 from rep_counter1 import rep_counter
 mp_drawing = mp.solutions.drawing_utils
 mp_pose = mp.solutions.pose
