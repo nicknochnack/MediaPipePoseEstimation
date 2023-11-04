@@ -51,6 +51,11 @@ with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as 
     while cap.isOpened():
         ret, frame = cap.read()
 
+        # Stop the code when the video is over
+        if not ret:
+            print('Failed to grab a frame')
+            break
+
         # Count frames and calculate time in video
         frame_count += 1
         time = frame_count / fps #[s]
