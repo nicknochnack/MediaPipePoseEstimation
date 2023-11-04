@@ -21,9 +21,10 @@ def calculate_angle(a,b,c):
     return angle 
 
 # Specify the location of the file with the video to be read
-filename_r = '/Videos/IMG_3620.MOV'
+sys.path.insert(0,'../Data/videos')
+filename_r = 'video1.mp4'
 # Specify the location where the new video with detections will be written
-filename_w = '/home/rafik/PROJECTS/pose1/Material/IMG_3620_test.mp4'
+filename_w = 'video1_wRepCount.mp4'
 # Capture the video from the file
 cap = cv2.VideoCapture(filename_r)
 
