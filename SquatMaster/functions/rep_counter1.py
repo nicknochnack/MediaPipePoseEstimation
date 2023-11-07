@@ -1,5 +1,11 @@
-
 def rep_counter(angle,upper_limit,lower_limit,min_rep_count,min_rep_time,time,stage,rep_count,last_event_time,real_counter):
+
+    """
+    Function use description:
+    To see help on how to use the rep_counter function, type: help(rep_counter) after importing it
+    ...
+    """
+
 
     # Above the upper angle limit, register the "hold up" stage
     if angle >= upper_limit:
