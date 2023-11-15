@@ -52,7 +52,7 @@ l = 0
 exercise_type = 'Squat'
 
 ## Setup mediapipe instance
-with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as pose:
+with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5, enable_segmentation=True) as pose:
 
     fps = cap.get(5)
     frame_width  = int(cap.get(3))
@@ -76,6 +76,8 @@ with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as 
       
         # Make detection
         results = pose.process(image)
+        if results.segmentation_mask is None:
+            print('Empty mask')
     
         # Recolor back to BGR
         image.flags.writeable = True
@@ -83,25 +85,25 @@ with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as 
 
         # Extract landmarks
         try:
-            landmarks = results.pose_world_landmarks.landmark
+            landmarks = results.pose_landmarks.landmark
+            landmarks_3d = results.pose_world_landmarks.landmark
             
             # Get coordinates
             hip = [landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].x,landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].y]
             knee = [landmarks[mp_pose.PoseLandmark.RIGHT_KNEE.value].x,landmarks[mp_pose.PoseLandmark.RIGHT_KNEE.value].y]
             ankle = [landmarks[mp_pose.PoseLandmark.RIGHT_ANKLE.value].x,landmarks[mp_pose.PoseLandmark.RIGHT_ANKLE.value].y]
             
-            hip_3d = [landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].x,landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].y,landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].z]
-            knee_3d = [landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].x,landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].y,landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].z]
-            ankle_3d = [landmarks[mp_pose.PoseLandmark.LEFT_ANKLE.value].x,landmarks[mp_pose.PoseLandmark.LEFT_ANKLE.value].y,landmarks[mp_pose.PoseLandmark.LEFT_ANKLE.value].z]
+            hip_3d = [landmarks_3d[mp_pose.PoseLandmark.LEFT_HIP.value].x,landmarks_3d[mp_pose.PoseLandmark.LEFT_HIP.value].y,landmarks_3d[mp_pose.PoseLandmark.LEFT_HIP.value].z]
+            knee_3d = [landmarks_3d[mp_pose.PoseLandmark.LEFT_KNEE.value].x,landmarks_3d[mp_pose.PoseLandmark.LEFT_KNEE.value].y,landmarks_3d[mp_pose.PoseLandmark.LEFT_KNEE.value].z]
+            ankle_3d = [landmarks_3d[mp_pose.PoseLandmark.LEFT_ANKLE.value].x,landmarks_3d[mp_pose.PoseLandmark.LEFT_ANKLE.value].y,landmarks_3d[mp_pose.PoseLandmark.LEFT_ANKLE.value].z]
         
             # Calculate angle
             angle = calculate_angle(hip, knee, ankle)
             angle_3d = calculate_angle_3d(hip_3d, knee_3d, ankle_3d)
             
             # Visualize angle
-            cv2.putText(image, f"{angle_3d:.1f}", 
-                        #    tuple(np.multiply(knee, frame_size).astype(int)),
-                            knee,
+            cv2.putText(image, f"{angle_3d:.0f}", 
+                           tuple(np.multiply(knee, frame_size).astype(int)+10),
                            cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2, cv2.LINE_AA
                                 )
             
@@ -124,6 +126,14 @@ with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as 
             # Run stage classifier
             stage_class, image_upper, image_middown, image_lower, image_midup, i,j,k,l = stage_classifier(angle, exercise_type, image, stage_class, image_upper,image_middown,image_lower,image_midup, i,j,k,l)
             print(stage_class)
+            
+            # Run image segmentation
+            if results.segmentation_mask is not None:
+                segmented_image = image.copy()
+                tightness = 0.4
+                condition = condition = np.stack((results.segmentation_mask,) * 3, axis=-1) > tightness
+                bg_image = np.zeros(image.shape, dtype=np.uint8)
+                segmented_image = np.where(condition, segmented_image, bg_image)
 
         except:
             pass
@@ -155,17 +165,23 @@ with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as 
                                 mp_drawing.DrawingSpec(color=(245,66,230), thickness=2, circle_radius=2) 
                                  )               
         
+
         # Display and write the video
         if ret == True:
             cv2.imshow('Mediapipe Feed', image)
             output.write(image)
 
-            if image_upper is None:
-                print('Image is empty')
+            if image_lower is None:
+                print('Stage classifier not working')
             else:
-                cv2.imshow('Classifier', image_lower)
+                cv2.imshow('Classifier',image_lower)
                 # print([i,j,k,l])
                 print(angle_3d)
+
+            if results.segmentation_mask is None:
+                print('Segmentation not working')
+            else:
+                cv2.imshow('Segmentation',segmented_image)
 
 
             # Pause or stop the video when instructed
