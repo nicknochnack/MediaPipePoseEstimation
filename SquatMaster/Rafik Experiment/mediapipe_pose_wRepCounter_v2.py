@@ -5,6 +5,8 @@ import sys
 sys.path.insert(0,'../functions')
 from rep_counter1 import rep_counter
 from joint_angle_calc1 import calculate_angle
+from joint_angle_calc1 import calculate_angle_3d
+from stage_classifier1 import stage_classifier
 mp_drawing = mp.solutions.drawing_utils
 mp_pose = mp.solutions.pose
 import os
@@ -32,6 +34,22 @@ stage = None
 rep_count = 0
 last_event_time = 0
 frame_count = 0
+
+# Initialize the stage classifier variables
+stage_class = None
+imcap = cv2.VideoCapture(filename_r)
+im_count = 0
+if im_count == 0:
+    success, image_upper = imcap.read()
+    im_count += 1
+image_middown = image_upper
+image_lower = image_upper
+image_midup = image_upper
+i = 0
+j = 0
+k = 0
+l = 0
+exercise_type = 'Squat'
 
 ## Setup mediapipe instance
 with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as pose:
@@ -65,19 +83,25 @@ with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as 
 
         # Extract landmarks
         try:
-            landmarks = results.pose_landmarks.landmark
+            landmarks = results.pose_world_landmarks.landmark
             
             # Get coordinates
             hip = [landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].x,landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].y]
             knee = [landmarks[mp_pose.PoseLandmark.RIGHT_KNEE.value].x,landmarks[mp_pose.PoseLandmark.RIGHT_KNEE.value].y]
             ankle = [landmarks[mp_pose.PoseLandmark.RIGHT_ANKLE.value].x,landmarks[mp_pose.PoseLandmark.RIGHT_ANKLE.value].y]
             
+            hip_3d = [landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].x,landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].y,landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].z]
+            knee_3d = [landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].x,landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].y,landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].z]
+            ankle_3d = [landmarks[mp_pose.PoseLandmark.LEFT_ANKLE.value].x,landmarks[mp_pose.PoseLandmark.LEFT_ANKLE.value].y,landmarks[mp_pose.PoseLandmark.LEFT_ANKLE.value].z]
+        
             # Calculate angle
             angle = calculate_angle(hip, knee, ankle)
+            angle_3d = calculate_angle_3d(hip_3d, knee_3d, ankle_3d)
             
             # Visualize angle
-            cv2.putText(image, f"{angle:.1f}", 
-                           tuple(np.multiply(knee, frame_size).astype(int)), 
+            cv2.putText(image, f"{angle_3d:.1f}", 
+                        #    tuple(np.multiply(knee, frame_size).astype(int)),
+                            knee,
                            cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2, cv2.LINE_AA
                                 )
             
@@ -95,6 +119,11 @@ with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as 
             stage,rep_count,last_event_time,real_counter = rep_counter(angle,upper_limit,lower_limit,min_rep_count,min_rep_time,time,
                                                                        stage,rep_count,last_event_time,real_counter)
             ##########################################################################################################################
+
+            
+            # Run stage classifier
+            stage_class, image_upper, image_middown, image_lower, image_midup, i,j,k,l = stage_classifier(angle, exercise_type, image, stage_class, image_upper,image_middown,image_lower,image_midup, i,j,k,l)
+            print(stage_class)
 
         except:
             pass
@@ -130,6 +159,14 @@ with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as 
         if ret == True:
             cv2.imshow('Mediapipe Feed', image)
             output.write(image)
+
+            if image_upper is None:
+                print('Image is empty')
+            else:
+                cv2.imshow('Classifier', image_lower)
+                # print([i,j,k,l])
+                print(angle_3d)
+
 
             # Pause or stop the video when instructed
             key = cv2.waitKey(5)
