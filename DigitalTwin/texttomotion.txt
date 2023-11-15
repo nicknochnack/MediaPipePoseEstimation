@@ -1,0 +1,2 @@
+https://mingyuan-zhang.github.io/projects/MotionDiffuse.html
+text to motioon code that can genrate digital twims that guide the exercise. 
