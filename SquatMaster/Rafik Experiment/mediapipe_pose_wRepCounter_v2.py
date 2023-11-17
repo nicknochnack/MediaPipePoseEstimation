@@ -10,13 +10,16 @@ from stage_classifier1 import stage_classifier
 mp_drawing = mp.solutions.drawing_utils
 mp_pose = mp.solutions.pose
 import os
-
+from plotly_3dview import plot_landmarks
 
 # Specify the location of the file with the video to be read
+# Capture frames from a saved video
 filename_r = '../Data/videos/exercise_stock_video3.mp4'
+# Capture frames from a webcam feed
+# filename_r = 0
 # Specify the location where the new video with detections will be written
 filename_w = '../Data/videos/exercise_stock_video3_wRepCount.mp4'
-# Capture the video from the file
+
 cap = cv2.VideoCapture(filename_r)
 
 # Get video frame dimensions and fps
@@ -52,7 +55,7 @@ l = 0
 exercise_type = 'Squat'
 
 ## Setup mediapipe instance
-with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5, enable_segmentation=True) as pose:
+with mp_pose.Pose(min_detection_confidence=0.9, min_tracking_confidence=0.5, enable_segmentation=True) as pose:
 
     fps = cap.get(5)
     frame_width  = int(cap.get(3))
@@ -160,11 +163,15 @@ with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5, ena
         
 
         # Render detections
-        mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS,
-                                mp_drawing.DrawingSpec(color=(245,117,66), thickness=2, circle_radius=2), 
-                                mp_drawing.DrawingSpec(color=(245,66,230), thickness=2, circle_radius=2) 
-                                 )               
+        # mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS,
+        #                         mp_drawing.DrawingSpec(color=(245,117,66), thickness=2, circle_radius=2), 
+        #                         mp_drawing.DrawingSpec(color=(245,66,230), thickness=2, circle_radius=2) 
+        #                          )
+
+
+        # mp_drawing.plot_landmarks(results.pose_world_landmarks,  mp_pose.POSE_CONNECTIONS)     
         
+        fig = plot_landmarks(mp_pose, results.pose_world_landmarks,  mp_pose.POSE_CONNECTIONS)
 
         # Display and write the video
         if ret == True:
@@ -183,7 +190,6 @@ with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5, ena
             else:
                 cv2.imshow('Segmentation',segmented_image)
 
-
             # Pause or stop the video when instructed
             key = cv2.waitKey(5)
             # Stop by pressing 'q'
@@ -197,3 +203,4 @@ with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5, ena
     cap.release()
     cv2.destroyAllWindows()
 
+fig.show()
