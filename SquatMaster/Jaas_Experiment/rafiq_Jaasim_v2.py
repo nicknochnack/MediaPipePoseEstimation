@@ -106,14 +106,20 @@ with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as 
             foot_dist = abs(footindex[0] - footindex1[0])
             adjuster = heel_dist/foot_dist
             text_position = (int(heel[0] * frame.shape[1]), int(heel[1] * frame.shape[0]) - 20)
+            text_position1 = (int(heel[0] * frame.shape[1]), int(heel[1] * frame.shape[0]))
+
 
             if adjuster >= 0.55:
                 cv2.putText(image, "OK", text_position, cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
             else:
                 cv2.putText(image, "NOT OK", text_position, cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
 
+            if 0.99 <= (heel[1] / heel1 [1]) <= 1.01:
+                cv2.putText(image, "OK", text_position, cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+            else:
+                cv2.putText(image, "FIXHEEL", text_position1, cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
 
-
+ 
 
 
 ################################################################################################################################################################################################           
