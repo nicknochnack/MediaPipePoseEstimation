@@ -206,5 +206,4 @@ with mp_pose.Pose(min_detection_confidence=0.9, min_tracking_confidence=0.5, ena
 # Output the interactive plotly figure to browser to view
 # fig.show()
 
-print(type(landmarks))
 
