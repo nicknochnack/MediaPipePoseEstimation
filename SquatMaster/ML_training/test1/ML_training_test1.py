@@ -17,3 +17,8 @@ image_count = len(list(data_dir.glob('*/*.jpg')))
 print(image_count)
 
 
+
+roses = list(data_dir.glob('roses/*'))
+im = PIL.Image.open(str(roses[1]))
+
+im.show()
