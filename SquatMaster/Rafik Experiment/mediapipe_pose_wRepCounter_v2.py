@@ -16,7 +16,7 @@ from plotly_3dview import plot_landmarks
 # Capture frames from a saved video
 filename_r = '../Data/videos/exercise_stock_video3.mp4'
 # Capture frames from a webcam feed
-# filename_r = 0
+# filename_r = 4
 # Specify the location where the new video with detections will be written
 filename_w = '../Data/videos/exercise_stock_video3_wRepCount.mp4'
 
@@ -133,7 +133,7 @@ with mp_pose.Pose(min_detection_confidence=0.9, min_tracking_confidence=0.5, ena
             # Run image segmentation
             if results.segmentation_mask is not None:
                 segmented_image = image.copy()
-                tightness = 0.4
+                tightness = 0.01
                 condition = condition = np.stack((results.segmentation_mask,) * 3, axis=-1) > tightness
                 bg_image = np.zeros(image.shape, dtype=np.uint8)
                 segmented_image = np.where(condition, segmented_image, bg_image)
@@ -183,7 +183,7 @@ with mp_pose.Pose(min_detection_confidence=0.9, min_tracking_confidence=0.5, ena
             else:
                 cv2.imshow('Classifier',image_lower)
                 # print([i,j,k,l])
-                print(angle_3d)
+                # print(angle_3d)
 
             if results.segmentation_mask is None:
                 print('Segmentation not working')
