@@ -14,7 +14,8 @@ from plotly_3dview import plot_landmarks
 
 # Specify the location of the file with the video to be read
 # Capture frames from a saved video
-filename_r = '../Data/videos/exercise_stock_video3.mp4'
+# filename_r = '../Data/videos/exercise_stock_video3.mp4'
+filename_r = '../Data/videos/WalkingAround_Joe_glamr_vs_hybrik.mp4'
 # Capture frames from a webcam feed
 # filename_r = 4
 # Specify the location where the new video with detections will be written
